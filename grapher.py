@@ -55,47 +55,47 @@ def main():
         if out_filename and out_format not in pydot.Dot.formats:
             raise getopt.GetoptError("Format not supported: "+out_format)
 
-        # pyyl.sanity() prints out stuff and it doesn't look like I can shut it up, 
-        # so wrap it in /* */ so any output is ignored by Dot
-        print "/*",
-        parser = get_parser(grammar_filename)
-        lexer = get_lexer(lex_filename)
-        print "*/",
-        if not instring:
-            lexer.setinput("-")
-        else:
-            lexer.setinputstr(instring)
-        parser.setlexer(lexer)
-        tree = parser.parse()
-        dot_list = get_dot_list(tree)
-
-        if not animated:
-            dot = pydot.graph_from_dot_data(prefix+'\n'.join(dot_list)+"}")
-            if not out_filename:
-                print dot.to_string()
-            else:
-                dot.write(path = out_filename, format = out_format)
-        else:
-            image_sequence = []
-            #temporary directory for storing frames of the to-be animation
-            dir_name = mkdtemp()
-            path = ""
-            for i in range(len(dot_list)+1):
-                dot = pydot.graph_from_dot_data(prefix+'\n'.join(dot_list[1:i])+"}")
-                path = "%s/%s%i.gif" % (dir_name, i < 10 and "0" or "", i)
-                dot.write(path = path, format = "gif")
-            # get the size of the largest image to use as size argument for animation
-            cmd = "identify -format '%wx%h' "+path
-            size = os.popen(cmd).read().strip()
-            # assemble frames into animation with ImageMagick
-            cmd = "convert -dispose 2 -extent %s -delay %d -loop 0 %s/*.gif %s" % (size, frame_delay, dir_name, out_filename)
-            os.system(cmd)
-            # clean-up
-            rmtree(dir_name)
-
     except getopt.GetoptError, e:
        print str(e)
        sys.exit(2)
+
+    # pyyl.sanity() prints out stuff and it doesn't look like I can shut it up, 
+    # so wrap it in /* */ so any output is ignored by Dot
+    print "/*",
+    parser = get_parser(grammar_filename)
+    lexer = get_lexer(lex_filename)
+    print "*/",
+    if not instring:
+        lexer.setinput("-")
+    else:
+        lexer.setinputstr(instring)
+    parser.setlexer(lexer)
+    tree = parser.parse()
+    dot_list = get_dot_list(tree)
+
+    if not animated:
+        dot = pydot.graph_from_dot_data(prefix+'\n'.join(dot_list)+"}")
+        if not out_filename:
+            print dot.to_string()
+        else:
+            dot.write(path = out_filename, format = out_format)
+    else:
+        image_sequence = []
+        #temporary directory for storing frames of the to-be animation
+        dir_name = mkdtemp()
+        path = ""
+        for i in range(len(dot_list)+1):
+            dot = pydot.graph_from_dot_data(prefix+'\n'.join(dot_list[1:i])+"}")
+            path = "%s/%s%i.gif" % (dir_name, i < 10 and "0" or "", i)
+            dot.write(path = path, format = "gif")
+        # get the size of the largest image to use as size argument for animation
+        cmd = "identify -format '%wx%h' "+path
+        size = os.popen(cmd).read().strip()
+        # assemble frames into animation with ImageMagick
+        cmd = "convert -dispose 2 -extent %s -delay %d -loop 0 %s/*.gif %s" % (size, frame_delay, dir_name, out_filename)
+        os.system(cmd)
+        # clean-up
+        rmtree(dir_name)
 
 def get_prefix():
     return """
