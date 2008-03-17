@@ -1,0 +1,14 @@
+INITIAL :
+    "\+"    : return "plus"
+    "\*"    : return "times"
+    "-"     : return "minus"
+    ":="    : return "assign"
+    ";"     : return "semi"
+    "\("    : return "lpar"
+    "\)"    : return "rpar"
+    "begin" : return "begin"
+    "end"   : return "end"
+    "id"    : return "id"
+    "[[:blank:]]" : return
+    "\n"    : return
+    "."     : print "skipping unknown letter %s" % self.value

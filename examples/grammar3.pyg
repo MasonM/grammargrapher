@@ -1,0 +1,15 @@
+S   -> begin SL end
+    | id assign E semi
+    ;
+SL  -> SL S
+    | S
+    ;
+E   -> E plus T
+    | T
+    ;
+T   -> P times T 
+    | P
+    ;
+P   -> lpar E rpar
+    | id
+    ;

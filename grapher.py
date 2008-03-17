@@ -56,6 +56,8 @@ def main():
         if out_filename and out_format not in pydot.Dot.formats:
             raise getopt.GetoptError("Format not supported: "+out_format)
 
+        print grammar_filename
+        print lex_filename
         # pyyl.sanity() prints out stuff and it doesn't look like I can shut it up, 
         # so wrap it in /* */ so any output is ignored by Dot
         print "/*",
@@ -123,7 +125,8 @@ the lexical specifications, and [options] is taken from the following list:
 
 def get_parser(filename):
     #create temporary file for the machine-generated Python stuff
-    temp = NamedTemporaryFile(prefix = filename[:-4], suffix = "_gramtab.py")
+    prefix = os.path.basename(filename)[:-4]
+    temp = NamedTemporaryFile(prefix = prefix, suffix = "_gramtab.py")
     pyggy.parsespec(filename, temp.name)
     gram = {}
     exec temp.read() in gram
@@ -134,7 +137,8 @@ def get_parser(filename):
     return p
 
 def get_lexer(filename):
-    temp = NamedTemporaryFile(prefix = filename[:-4], suffix = "lextab.py")
+    prefix = os.path.basename(filename)[:-4]
+    temp = NamedTemporaryFile(prefix = prefix, suffix = "lextab.py")
     lex = {}
     pylly.parsespec(filename, temp.name)
     exec temp.read() in lex
@@ -156,15 +160,17 @@ def dot_list_rec(level_list, sym, rules, syms):
     syms[sym] = 1
 
     name = util.printable(str(sym.sym), 1, 0)
-    string = 'sym_%d [label="%s", color=red];' % (hash(sym), name)
+    string = 'sym_%d [label="%s", color=red];\n' % (hash(sym), name)
     for p in sym.possibilities :
-        string += "sym_%d -> rule_%d;\n" % (hash(sym), hash(p))
+        #string += "sym_%d -> rule_%d;\n" % (hash(sym), hash(p))
         if not rules.has_key(p):
             rules[p] = 1
             name = util.printable(str(p.rule), 1, 0)
-            string += 'rule_%d [label="%s"];\n' % (hash(p), name)
+            #string += 'rule_%d [label="%s"];\n' % (hash(p), name)
             for e in p.elements:
-                string += "rule_%d -> sym_%s;\n" % (hash(p), hash(e))
+                if isinstance(e.sym, tuple):
+                    string += 'sym_%d [label="%s"];\n' % (hash(e), e.sym[1])
+                string += "sym_%d -> sym_%d;\n" % (hash(sym), hash(e))
                 dot_list_rec(level_list, e, rules, syms)
         level_list.append(string)
 
