@@ -1,0 +1,22 @@
+E -> E eq T
+   | E lt T
+   | E gt T
+   | T
+   ;
+T -> F plus T
+   | F minus T
+   | F
+   ;
+F -> F times N
+   | F div N
+   | N
+   ;
+N -> excl N
+   | S
+   ;
+S -> S semi
+   | P
+   ;
+P -> lpar E rpar
+   | a
+   ;

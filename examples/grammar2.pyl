@@ -1,0 +1,16 @@
+INITIAL :
+    "\+" : return "plus"
+    "\*" : return "times"
+    "-"  : return "minus"
+    "/"  : return "div"
+    ">"  : return "gt"
+    "<"  : return "lt"
+    "==" : return "eq"
+    "!"  : return "excl"
+    ";"  : return "semi"
+    "\("  : return "lpar"
+    "\)"  : return "rpar"
+    "\n" : return
+    "a"  : return "a"
+    "."  : print "skipping unknown letter", self.tokdata[0]
+

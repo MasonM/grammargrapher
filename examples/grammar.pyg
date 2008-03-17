@@ -1,0 +1,15 @@
+E -> E plus T
+  | E minus T
+  | T
+  ;
+T -> F times T
+  | F div T
+  | F
+  ;
+F -> minus F
+  | plus F
+  | P
+  ;
+P -> lpar E rpar
+  | i
+  ;

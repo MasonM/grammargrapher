@@ -1,0 +1,22 @@
+numbers
+    number
+operators
+    plus   "+"
+    times  "*"
+    minus  "-"
+    div    "/"
+brackets
+    lpar "("
+    rpar ")"
+start
+    EXPR
+rules
+EXPR -> TERM
+      | TERM plus EXPR
+      | TERM minus EXPR
+TERM -> FACTOR
+      | FACTOR times TERM
+      | FACTOR div TERM
+FACTOR -> number
+        | minus FACTOR
+        | lpar EXPR rpar
