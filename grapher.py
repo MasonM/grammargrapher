@@ -3,7 +3,6 @@
 from pyggy import lexer, glr, srgram, pylly, pyggy, util
 from tempfile import NamedTemporaryFile, mkdtemp
 from shutil import rmtree
-import gifmaker
 import pydot
 import getopt
 import sys
@@ -56,8 +55,6 @@ def main():
         if out_filename and out_format not in pydot.Dot.formats:
             raise getopt.GetoptError("Format not supported: "+out_format)
 
-        print grammar_filename
-        print lex_filename
         # pyyl.sanity() prints out stuff and it doesn't look like I can shut it up, 
         # so wrap it in /* */ so any output is ignored by Dot
         print "/*",
@@ -82,12 +79,16 @@ def main():
             image_sequence = []
             #temporary directory for storing frames of the to-be animation
             dir_name = mkdtemp()
-            for i in range(len(dot_list)):
-                dot = pydot.graph_from_dot_data(prefix+'\n'.join(dot_list[:i])+"}")
+            path = ""
+            for i in range(len(dot_list)+1):
+                dot = pydot.graph_from_dot_data(prefix+'\n'.join(dot_list[1:i])+"}")
                 path = "%s/%s%i.gif" % (dir_name, i < 10 and "0" or "", i)
-                dot.write(path = path, format = "png")
+                dot.write(path = path, format = "gif")
+            # get the size of the largest image to use as size argument for animation
+            cmd = "identify -format '%wx%h' "+path
+            size = os.popen(cmd).read().strip()
             # assemble frames into animation with ImageMagick
-            cmd = "convert -delay %d -loop 0 %s/*.gif %s" % (frame_delay, dir_name, out_filename)
+            cmd = "convert -dispose 2 -extent %s -delay %d -loop 0 %s/*.gif %s" % (size, frame_delay, dir_name, out_filename)
             os.system(cmd)
             # clean-up
             rmtree(dir_name)
@@ -117,7 +118,7 @@ Where <grammar> is a .pyg file containing a CFG grammar, <lexicalspec> is a .pyl
 the lexical specifications, and [options] is taken from the following list:
   -p <file>     Override default prefix for dot files with given file.
   -a <delay>    If set, write an animated GIF showing the construction of the parse tree
-                from top to bottom, with <delay> seconds delay between each frame.
+                from top to bottom, with <delay> ms delay between each frame.
   -o <outfile>  Write to given file. Extension determines format. If not specified, dot file 
                 will be printed to stdout.
   -i <instring> String to parse. If not provided, input will be taken from STDIN.
