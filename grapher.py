@@ -1,10 +1,5 @@
 #!/usr/bin/python
 
-# GrammarGrapher - Basic script to display parse trees for user-provided input
-# using a GLR parsing algorithm. See examples/ directory for examples of usage.
-# Licensed under the MIT License
-# Mason Malone, 03/17/2008
-
 from pyggy import lexer, glr, srgram, pylly, pyggy, util
 from tempfile import NamedTemporaryFile, mkdtemp
 from shutil import rmtree

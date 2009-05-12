@@ -1,0 +1,29 @@
+=======
+Summary
+=======
+GrammarGrapher is a basic script to display parse trees for user-provided input 
+using a GLR parsing algorithm. See examples/ directory for examples of usage. 
+Licensed under the MIT License
+
+============
+Dependencies
+============
+- Python 2.5-2.6
+- PyGgy 0.4.1 (http://www.lava.net/~newsham/pyggy/pyggy-0.4.1.tar.gz)
+- pydot 1.0.2 (http://pydot.googlecode.com/files/pydot-1.0.2.tar.gz)
+- ImageMagick 7.0+
+
+=====
+Usage
+=====
+grapher.py [options] <grammar> <lexicalspec>
+
+Where <grammar> is a .pyg file containing a CFG grammar, <lexicalspec> is a .pyl containing
+the lexical specifications, and [options] is taken from the following list:
+  -p <file>     Override default prefix for dot files with given file.
+  -a <delay>    If set, write an animated GIF showing the construction of the parse tree
+                from top to bottom, with <delay> ms delay between each frame.
+  -o <outfile>  Write to given file. Extension determines format. If not specified, dot file 
+                will be printed to stdout.
+  -i <instring> String to parse. If not provided, input will be taken from STDIN.
+  -h, --help    Print this message
