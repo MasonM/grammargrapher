@@ -57,7 +57,7 @@ def main():
             out_format = out_filename[-3:]
         if animated and out_format != "gif":
             raise getopt.GetoptError("Output filename must end in .gif with -a option")
-        if out_filename and out_format not in pydot.Dot.formats:
+        if out_filename and out_format not in pydot.Dot().formats:
             raise getopt.GetoptError("Format not supported: "+out_format)
 
     except getopt.GetoptError, e:
